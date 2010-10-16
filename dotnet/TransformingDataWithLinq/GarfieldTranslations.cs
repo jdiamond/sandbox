@@ -16,20 +16,40 @@ namespace TransformingDataWithLinq
             // Check the total count.
             Assert.AreEqual(3, translations.Count);
 
-            // Check TargetId.
-            Assert.AreEqual(1, translations[0].TargetId);
-            Assert.AreEqual(2, translations[1].TargetId);
-            Assert.AreEqual(3, translations[2].TargetId);
+            AssertTranslationsAreEqual(
+                new NetworkTranslationDAL.NetworkTranslation
+                {
+                    TargetId = 1,
+                    PimsNetwork = "ANN",
+                    PimsRole = "*"
+                },
+                translations[0]);
 
-            // Check PimsNetwork.
-            Assert.AreEqual("ANN", translations[0].PimsNetwork);
-            Assert.AreEqual("ANN", translations[1].PimsNetwork);
-            Assert.AreEqual("ANN", translations[2].PimsNetwork);
+            AssertTranslationsAreEqual(
+                new NetworkTranslationDAL.NetworkTranslation
+                {
+                    TargetId = 2,
+                    PimsNetwork = "ANN",
+                    PimsRole = "*"
+                },
+                translations[1]);
 
-            // Check PimsRole.
-            Assert.AreEqual("*", translations[0].PimsRole);
-            Assert.AreEqual("*", translations[1].PimsRole);
-            Assert.AreEqual("*", translations[2].PimsRole);
+            AssertTranslationsAreEqual(
+                new NetworkTranslationDAL.NetworkTranslation
+                {
+                    TargetId = 3,
+                    PimsNetwork = "ANN",
+                    PimsRole = "*"
+                },
+                translations[2]);
+        }
+
+        private static void AssertTranslationsAreEqual(NetworkTranslationDAL.NetworkTranslation expected,
+                                                       NetworkTranslationDAL.NetworkTranslation actual)
+        {
+            Assert.AreEqual(expected.TargetId, actual.TargetId);
+            Assert.AreEqual(expected.PimsNetwork, actual.PimsNetwork);
+            Assert.AreEqual(expected.PimsRole, actual.PimsRole);
         }
     }
 
