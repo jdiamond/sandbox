@@ -12,7 +12,14 @@ namespace TransformingDataWithLinq
         {
             var dal = new NetworkTranslationDAL();
             var translations = dal.GetTranslations();
+
+            // Check the total count.
             Assert.AreEqual(3, translations.Count);
+
+            // Check TargetId.
+            Assert.AreEqual(1, translations[0].TargetId);
+            Assert.AreEqual(2, translations[1].TargetId);
+            Assert.AreEqual(3, translations[2].TargetId);
         }
     }
 
@@ -70,7 +77,10 @@ namespace TransformingDataWithLinq
 
             //TODO:Figure out how to move the data from transList to NetworkTranslation
 
-            foreach (var xpfTrans in transList.GroupBy(t => t.TargetID).Select(g => new NetworkTranslation()))
+            foreach (var xpfTrans in transList.GroupBy(t => t.TargetID).Select(g => new NetworkTranslation
+                                                                                    {
+                                                                                        TargetId = g.Key
+                                                                                    }))
             {
                 result.Add(xpfTrans);
             }
