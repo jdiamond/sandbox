@@ -90,14 +90,25 @@ namespace TransformingDataWithLinq
             foreach (var xpfTrans in transList.GroupBy(t => t.TargetID).Select(g => new NetworkTranslation
                                                                                     {
                                                                                         TargetId = g.Key,
-                                                                                        PimsNetwork = g.Single(t => t.TransFieldID == 1).RuleValue,
-                                                                                        PimsRole = g.Single(t => t.TransFieldID == 2).RuleValue,
+                                                                                        PimsNetwork = GetValueByFieldId(g, FieldIds.Network),
+                                                                                        PimsRole = GetValueByFieldId(g, FieldIds.Role)
                                                                                     }))
             {
                 result.Add(xpfTrans);
             }
 
             return result;
+        }
+
+        private static string GetValueByFieldId(IEnumerable<Translation> translations, int fieldId)
+        {
+            return translations.Single(t => t.TransFieldID == fieldId).RuleValue;
+        }
+
+        public static class FieldIds
+        {
+            public const int Network = 1;
+            public const int Role = 2;
         }
 
         public class Translation //this is a temporary class I'm using to hold the data to show how it is coming from the database.
