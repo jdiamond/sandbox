@@ -8,7 +8,7 @@ namespace TransformingDataWithLinq
     public class GarfieldTranslations
     {
         [Test]
-        public void GetTranslations()
+        public void GetTranslationsTest()
         {
             var dal = new NetworkTranslationDAL();
             var translations = dal.GetTranslations();
