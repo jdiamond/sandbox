@@ -20,19 +20,37 @@ namespace TransformingDataWithLinq
                     {
                         TargetId = 1,
                         PimsNetwork = "ANN",
-                        PimsRole = "*"
+                        PimsRole = "*",
+                        WrittenAgreement = new List<KeyValuePair<string, string>>
+                                           {
+                                               new KeyValuePair<string, string>("EX", "MGA1"),
+                                               new KeyValuePair<string, string>("EX", "S"),
+                                               new KeyValuePair<string, string>("IN", "*"),
+                                           }
                     },
                     new NetworkTranslationDAL.NetworkTranslation
                     {
                         TargetId = 2,
                         PimsNetwork = "ANN",
-                        PimsRole = "*"
+                        PimsRole = "*",
+                        WrittenAgreement = new List<KeyValuePair<string, string>>
+                                           {
+                                               new KeyValuePair<string, string>("EX", "MGA1"),
+                                               new KeyValuePair<string, string>("EX", "S"),
+                                               new KeyValuePair<string, string>("IN", "*"),
+                                           }
                     },
                     new NetworkTranslationDAL.NetworkTranslation
                     {
                         TargetId = 3,
                         PimsNetwork = "ANN",
-                        PimsRole = "*"
+                        PimsRole = "*",
+                        WrittenAgreement = new List<KeyValuePair<string, string>>
+                                           {
+                                               new KeyValuePair<string, string>("EX", "MGA1"),
+                                               new KeyValuePair<string, string>("EX", "S2"),
+                                               new KeyValuePair<string, string>("IN", "*"),
+                                           }
                     }
                 },
                 translations);
@@ -55,6 +73,14 @@ namespace TransformingDataWithLinq
             Assert.AreEqual(expected.TargetId, actual.TargetId);
             Assert.AreEqual(expected.PimsNetwork, actual.PimsNetwork);
             Assert.AreEqual(expected.PimsRole, actual.PimsRole);
+
+            Assert.AreEqual(expected.WrittenAgreement.Count, actual.WrittenAgreement.Count);
+
+            for (var i = 0; i < expected.WrittenAgreement.Count; i++)
+            {
+                Assert.AreEqual(expected.WrittenAgreement[i].Key, actual.WrittenAgreement[i].Key);
+                Assert.AreEqual(expected.WrittenAgreement[i].Value, actual.WrittenAgreement[i].Value);
+            }
         }
     }
 
@@ -116,7 +142,8 @@ namespace TransformingDataWithLinq
                                                                                     {
                                                                                         TargetId = g.Key,
                                                                                         PimsNetwork = GetValueByFieldId(g, FieldIds.Network),
-                                                                                        PimsRole = GetValueByFieldId(g, FieldIds.Role)
+                                                                                        PimsRole = GetValueByFieldId(g, FieldIds.Role),
+                                                                                        WrittenAgreement = GetValuesByFieldId(g, FieldIds.WrittenAgreement)
                                                                                     }))
             {
                 result.Add(xpfTrans);
@@ -130,10 +157,18 @@ namespace TransformingDataWithLinq
             return translations.Single(t => t.TransFieldID == fieldId).RuleValue;
         }
 
+        private static IList<KeyValuePair<string, string>> GetValuesByFieldId(IEnumerable<Translation> translations, int fieldId)
+        {
+            return translations.Where(t => t.TransFieldID == fieldId)
+                               .Select(t => new KeyValuePair<string, string>(t.RuleType, t.RuleValue))
+                               .ToList();
+        }
+
         public static class FieldIds
         {
             public const int Network = 1;
             public const int Role = 2;
+            public const int WrittenAgreement = 3;
         }
 
         public class Translation //this is a temporary class I'm using to hold the data to show how it is coming from the database.
