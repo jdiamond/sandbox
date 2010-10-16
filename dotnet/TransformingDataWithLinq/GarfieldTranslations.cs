@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace TransformingDataWithLinq
@@ -63,13 +64,16 @@ namespace TransformingDataWithLinq
 
             IList<NetworkTranslation> result = new List<NetworkTranslation>();
 
-            NetworkTranslation xpfTrans = new NetworkTranslation();  //I figured I'd create the object I want to return
-            IList<KeyValuePair<string, string>> listWrittenAgreements = new List<KeyValuePair<string, string>>();  //this represents the multiple written agreements above that I want in a list to add to xpfTrans object.
-            IList<KeyValuePair<string, string>> listSpecialties = new List<KeyValuePair<string, string>>();  //this represents the specialties above that I want in a list to add to xpfTrans object.
+            //NetworkTranslation xpfTrans = new NetworkTranslation();  //I figured I'd create the object I want to return
+            //IList<KeyValuePair<string, string>> listWrittenAgreements = new List<KeyValuePair<string, string>>();  //this represents the multiple written agreements above that I want in a list to add to xpfTrans object.
+            //IList<KeyValuePair<string, string>> listSpecialties = new List<KeyValuePair<string, string>>();  //this represents the specialties above that I want in a list to add to xpfTrans object.
 
             //TODO:Figure out how to move the data from transList to NetworkTranslation
 
-            result.Add(xpfTrans);
+            foreach (var xpfTrans in transList.GroupBy(t => t.TargetID).Select(g => new NetworkTranslation()))
+            {
+                result.Add(xpfTrans);
+            }
 
             return result;
         }
