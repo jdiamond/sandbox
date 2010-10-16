@@ -13,35 +13,40 @@ namespace TransformingDataWithLinq
             var dal = new NetworkTranslationDAL();
             var translations = dal.GetTranslations();
 
-            // Check the total count.
-            Assert.AreEqual(3, translations.Count);
-
             AssertTranslationsAreEqual(
-                new NetworkTranslationDAL.NetworkTranslation
+                new List<NetworkTranslationDAL.NetworkTranslation>
                 {
-                    TargetId = 1,
-                    PimsNetwork = "ANN",
-                    PimsRole = "*"
+                    new NetworkTranslationDAL.NetworkTranslation
+                    {
+                        TargetId = 1,
+                        PimsNetwork = "ANN",
+                        PimsRole = "*"
+                    },
+                    new NetworkTranslationDAL.NetworkTranslation
+                    {
+                        TargetId = 2,
+                        PimsNetwork = "ANN",
+                        PimsRole = "*"
+                    },
+                    new NetworkTranslationDAL.NetworkTranslation
+                    {
+                        TargetId = 3,
+                        PimsNetwork = "ANN",
+                        PimsRole = "*"
+                    }
                 },
-                translations[0]);
+                translations);
+        }
 
-            AssertTranslationsAreEqual(
-                new NetworkTranslationDAL.NetworkTranslation
-                {
-                    TargetId = 2,
-                    PimsNetwork = "ANN",
-                    PimsRole = "*"
-                },
-                translations[1]);
+        private static void AssertTranslationsAreEqual(IList<NetworkTranslationDAL.NetworkTranslation> expected,
+                                                       IList<NetworkTranslationDAL.NetworkTranslation> actual)
+        {
+            Assert.AreEqual(expected.Count, actual.Count);
 
-            AssertTranslationsAreEqual(
-                new NetworkTranslationDAL.NetworkTranslation
-                {
-                    TargetId = 3,
-                    PimsNetwork = "ANN",
-                    PimsRole = "*"
-                },
-                translations[2]);
+            for (int i = 0; i < expected.Count; i++)
+            {
+                AssertTranslationsAreEqual(expected[i], actual[i]);
+            }
         }
 
         private static void AssertTranslationsAreEqual(NetworkTranslationDAL.NetworkTranslation expected,
