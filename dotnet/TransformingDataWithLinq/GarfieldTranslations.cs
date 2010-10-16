@@ -26,7 +26,17 @@ namespace TransformingDataWithLinq
                                                new KeyValuePair<string, string>("EX", "MGA1"),
                                                new KeyValuePair<string, string>("EX", "S"),
                                                new KeyValuePair<string, string>("IN", "*"),
-                                           }
+                                           },
+                        ProviderType = "*",
+                        Degree = "*",
+                        Specialty = new List<KeyValuePair<string, string>>
+                                    {
+                                        new KeyValuePair<string, string>("Ex", "*"),
+                                        new KeyValuePair<string, string>("IN", "*"),
+                                    },
+                        County = "*",
+                        State = "*",
+                        TaxID = "*"
                     },
                     new NetworkTranslationDAL.NetworkTranslation
                     {
@@ -38,7 +48,17 @@ namespace TransformingDataWithLinq
                                                new KeyValuePair<string, string>("EX", "MGA1"),
                                                new KeyValuePair<string, string>("EX", "S"),
                                                new KeyValuePair<string, string>("IN", "*"),
-                                           }
+                                           },
+                        ProviderType = "*",
+                        Degree = "*",
+                        Specialty = new List<KeyValuePair<string, string>>
+                                    {
+                                        new KeyValuePair<string, string>("Ex", "*"),
+                                        new KeyValuePair<string, string>("IN", "*"),
+                                    },
+                        County = "*",
+                        State = "*",
+                        TaxID = "*"
                     },
                     new NetworkTranslationDAL.NetworkTranslation
                     {
@@ -50,7 +70,17 @@ namespace TransformingDataWithLinq
                                                new KeyValuePair<string, string>("EX", "MGA1"),
                                                new KeyValuePair<string, string>("EX", "S"),
                                                new KeyValuePair<string, string>("IN", "*"),
-                                           }
+                                           },
+                        ProviderType = "*",
+                        Degree = "*",
+                        Specialty = new List<KeyValuePair<string, string>>
+                                    {
+                                        new KeyValuePair<string, string>("Ex", "*"),
+                                        new KeyValuePair<string, string>("IN", "*"),
+                                    },
+                        County = "*",
+                        State = "*",
+                        TaxID = "*"
                     }
                 },
                 translations);
@@ -74,6 +104,12 @@ namespace TransformingDataWithLinq
             Assert.AreEqual(expected.PimsNetwork, actual.PimsNetwork);
             Assert.AreEqual(expected.PimsRole, actual.PimsRole);
             AssertListOfKeyValuePairsAreEqual(expected.WrittenAgreement, actual.WrittenAgreement);
+            Assert.AreEqual(expected.ProviderType, actual.ProviderType);
+            Assert.AreEqual(expected.Degree, actual.Degree);
+            AssertListOfKeyValuePairsAreEqual(expected.Specialty, actual.Specialty);
+            Assert.AreEqual(expected.County, actual.County);
+            Assert.AreEqual(expected.State, actual.State);
+            Assert.AreEqual(expected.TaxID, actual.TaxID);
 
         }
 
@@ -149,7 +185,13 @@ namespace TransformingDataWithLinq
                                                                                         TargetId = g.Key,
                                                                                         PimsNetwork = GetValueByFieldId(g, FieldIds.Network),
                                                                                         PimsRole = GetValueByFieldId(g, FieldIds.Role),
-                                                                                        WrittenAgreement = GetValuesByFieldId(g, FieldIds.WrittenAgreement)
+                                                                                        WrittenAgreement = GetValuesByFieldId(g, FieldIds.WrittenAgreement),
+                                                                                        ProviderType = GetValueByFieldId(g, FieldIds.ProviderType),
+                                                                                        Degree = GetValueByFieldId(g, FieldIds.Degree),
+                                                                                        Specialty = GetValuesByFieldId(g, FieldIds.Specialty),
+                                                                                        County = GetValueByFieldId(g, FieldIds.County),
+                                                                                        State = GetValueByFieldId(g, FieldIds.State),
+                                                                                        TaxID = GetValueByFieldId(g, FieldIds.TaxID)
                                                                                     }))
             {
                 result.Add(xpfTrans);
@@ -175,6 +217,12 @@ namespace TransformingDataWithLinq
             public const int Network = 1;
             public const int Role = 2;
             public const int WrittenAgreement = 3;
+            public const int ProviderType = 5;
+            public const int Degree = 6;
+            public const int Specialty = 7;
+            public const int County = 8;
+            public const int State = 9;
+            public const int TaxID = 11;
         }
 
         public class Translation //this is a temporary class I'm using to hold the data to show how it is coming from the database.
