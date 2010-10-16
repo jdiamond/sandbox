@@ -20,6 +20,16 @@ namespace TransformingDataWithLinq
             Assert.AreEqual(1, translations[0].TargetId);
             Assert.AreEqual(2, translations[1].TargetId);
             Assert.AreEqual(3, translations[2].TargetId);
+
+            // Check PimsNetwork.
+            Assert.AreEqual("ANN", translations[0].PimsNetwork);
+            Assert.AreEqual("ANN", translations[1].PimsNetwork);
+            Assert.AreEqual("ANN", translations[2].PimsNetwork);
+
+            // Check PimsRole.
+            Assert.AreEqual("*", translations[0].PimsRole);
+            Assert.AreEqual("*", translations[1].PimsRole);
+            Assert.AreEqual("*", translations[2].PimsRole);
         }
     }
 
@@ -79,7 +89,9 @@ namespace TransformingDataWithLinq
 
             foreach (var xpfTrans in transList.GroupBy(t => t.TargetID).Select(g => new NetworkTranslation
                                                                                     {
-                                                                                        TargetId = g.Key
+                                                                                        TargetId = g.Key,
+                                                                                        PimsNetwork = g.Single(t => t.TransFieldID == 1).RuleValue,
+                                                                                        PimsRole = g.Single(t => t.TransFieldID == 2).RuleValue,
                                                                                     }))
             {
                 result.Add(xpfTrans);
