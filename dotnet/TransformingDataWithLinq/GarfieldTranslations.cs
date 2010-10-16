@@ -48,7 +48,7 @@ namespace TransformingDataWithLinq
                         WrittenAgreement = new List<KeyValuePair<string, string>>
                                            {
                                                new KeyValuePair<string, string>("EX", "MGA1"),
-                                               new KeyValuePair<string, string>("EX", "S2"),
+                                               new KeyValuePair<string, string>("EX", "S"),
                                                new KeyValuePair<string, string>("IN", "*"),
                                            }
                     }
@@ -73,13 +73,19 @@ namespace TransformingDataWithLinq
             Assert.AreEqual(expected.TargetId, actual.TargetId);
             Assert.AreEqual(expected.PimsNetwork, actual.PimsNetwork);
             Assert.AreEqual(expected.PimsRole, actual.PimsRole);
+            AssertListOfKeyValuePairsAreEqual(expected.WrittenAgreement, actual.WrittenAgreement);
 
-            Assert.AreEqual(expected.WrittenAgreement.Count, actual.WrittenAgreement.Count);
+        }
 
-            for (var i = 0; i < expected.WrittenAgreement.Count; i++)
+        private static void AssertListOfKeyValuePairsAreEqual(IList<KeyValuePair<string, string>> expected,
+                                                              IList<KeyValuePair<string, string>> actual)
+        {
+            Assert.AreEqual(expected.Count, actual.Count);
+
+            for (var i = 0; i < expected.Count; i++)
             {
-                Assert.AreEqual(expected.WrittenAgreement[i].Key, actual.WrittenAgreement[i].Key);
-                Assert.AreEqual(expected.WrittenAgreement[i].Value, actual.WrittenAgreement[i].Value);
+                Assert.AreEqual(expected[i].Key, actual[i].Key);
+                Assert.AreEqual(expected[i].Value, actual[i].Value);
             }
         }
     }
