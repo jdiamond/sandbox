@@ -172,32 +172,22 @@ namespace TransformingDataWithLinq
                 new Translation { TargetID = 3, TransFieldID = 11, RuleType = "IN", FieldDescription="Tax ID", RuleValue="*"}
             };
 
-            IList<NetworkTranslation> result = new List<NetworkTranslation>();
-
-            //NetworkTranslation xpfTrans = new NetworkTranslation();  //I figured I'd create the object I want to return
-            //IList<KeyValuePair<string, string>> listWrittenAgreements = new List<KeyValuePair<string, string>>();  //this represents the multiple written agreements above that I want in a list to add to xpfTrans object.
-            //IList<KeyValuePair<string, string>> listSpecialties = new List<KeyValuePair<string, string>>();  //this represents the specialties above that I want in a list to add to xpfTrans object.
-
-            //TODO:Figure out how to move the data from transList to NetworkTranslation
-
-            foreach (var xpfTrans in transList.GroupBy(t => t.TargetID).Select(g => new NetworkTranslation
-                                                                                    {
-                                                                                        TargetId = g.Key,
-                                                                                        PimsNetwork = GetValueByFieldId(g, FieldIds.Network),
-                                                                                        PimsRole = GetValueByFieldId(g, FieldIds.Role),
-                                                                                        WrittenAgreement = GetValuesByFieldId(g, FieldIds.WrittenAgreement),
-                                                                                        ProviderType = GetValueByFieldId(g, FieldIds.ProviderType),
-                                                                                        Degree = GetValueByFieldId(g, FieldIds.Degree),
-                                                                                        Specialty = GetValuesByFieldId(g, FieldIds.Specialty),
-                                                                                        County = GetValueByFieldId(g, FieldIds.County),
-                                                                                        State = GetValueByFieldId(g, FieldIds.State),
-                                                                                        TaxID = GetValueByFieldId(g, FieldIds.TaxID)
-                                                                                    }))
-            {
-                result.Add(xpfTrans);
-            }
-
-            return result;
+            return transList
+                .GroupBy(t => t.TargetID)
+                .Select(g => new NetworkTranslation
+                             {
+                                 TargetId = g.Key,
+                                 PimsNetwork = GetValueByFieldId(g, FieldIds.Network),
+                                 PimsRole = GetValueByFieldId(g, FieldIds.Role),
+                                 WrittenAgreement = GetValuesByFieldId(g, FieldIds.WrittenAgreement),
+                                 ProviderType = GetValueByFieldId(g, FieldIds.ProviderType),
+                                 Degree = GetValueByFieldId(g, FieldIds.Degree),
+                                 Specialty = GetValuesByFieldId(g, FieldIds.Specialty),
+                                 County = GetValueByFieldId(g, FieldIds.County),
+                                 State = GetValueByFieldId(g, FieldIds.State),
+                                 TaxID = GetValueByFieldId(g, FieldIds.TaxID)
+                             })
+                .ToList();
         }
 
         private static string GetValueByFieldId(IEnumerable<Translation> translations, int fieldId)
