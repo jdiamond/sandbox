@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntParseVsConvertToInt32", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransformingDataWithLinq", "TransformingDataWithLinq\TransformingDataWithLinq.csproj", "{B00AE27C-99FA-4A69-B653-712A22C1CA38}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maybe", "Maybe\Maybe.csproj", "{D512BF2D-5EC7-4427-AE7F-4E1F24F719A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{B00AE27C-99FA-4A69-B653-712A22C1CA38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B00AE27C-99FA-4A69-B653-712A22C1CA38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B00AE27C-99FA-4A69-B653-712A22C1CA38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D512BF2D-5EC7-4427-AE7F-4E1F24F719A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D512BF2D-5EC7-4427-AE7F-4E1F24F719A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D512BF2D-5EC7-4427-AE7F-4E1F24F719A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D512BF2D-5EC7-4427-AE7F-4E1F24F719A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
