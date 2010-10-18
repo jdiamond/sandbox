@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Factory")]
+[assembly: AssemblyTitle("WindsorExample")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Factory")]
+[assembly: AssemblyProduct("WindsorExample")]
 [assembly: AssemblyCopyright("Copyright ©  2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("1fa3c501-c825-4cb7-8ea7-ab2a64b9b38c")]
+[assembly: Guid("262d22cc-54a3-4fab-9400-65ba7701c4e0")]
 
 // Version information for an assembly consists of the following four values:
 //

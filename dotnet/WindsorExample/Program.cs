@@ -2,7 +2,7 @@
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 
-namespace Simple
+namespace WindsorExample
 {
     class Program
     {

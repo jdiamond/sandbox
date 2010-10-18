@@ -4,7 +4,7 @@ using Castle.Facilities.TypedFactory;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 
-namespace Factory
+namespace WindsorFactory
 {
     class Program
     {
