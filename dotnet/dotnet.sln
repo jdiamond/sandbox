@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransformingDataWithLinq", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maybe", "Maybe\Maybe.csproj", "{D512BF2D-5EC7-4427-AE7F-4E1F24F719A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatelessExample", "StatelessExample\StatelessExample.csproj", "{EEC52524-5199-4D26-A497-8A44D7BDE2F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{D512BF2D-5EC7-4427-AE7F-4E1F24F719A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D512BF2D-5EC7-4427-AE7F-4E1F24F719A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D512BF2D-5EC7-4427-AE7F-4E1F24F719A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEC52524-5199-4D26-A497-8A44D7BDE2F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEC52524-5199-4D26-A497-8A44D7BDE2F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEC52524-5199-4D26-A497-8A44D7BDE2F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEC52524-5199-4D26-A497-8A44D7BDE2F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
