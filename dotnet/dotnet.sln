@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindsorExample", "WindsorEx
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindsorFactory", "WindsorFactory\WindsorFactory.csproj", "{021773B2-2D77-40DC-9AAC-89D3184B8E6B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomTool", "CustomTool\CustomTool.csproj", "{A20E3FD7-D21E-49D9-B1CA-2907CADDD97E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{021773B2-2D77-40DC-9AAC-89D3184B8E6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{021773B2-2D77-40DC-9AAC-89D3184B8E6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{021773B2-2D77-40DC-9AAC-89D3184B8E6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A20E3FD7-D21E-49D9-B1CA-2907CADDD97E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A20E3FD7-D21E-49D9-B1CA-2907CADDD97E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A20E3FD7-D21E-49D9-B1CA-2907CADDD97E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A20E3FD7-D21E-49D9-B1CA-2907CADDD97E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
