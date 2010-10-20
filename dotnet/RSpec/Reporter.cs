@@ -6,47 +6,62 @@ namespace RSpec
     public class Reporter
     {
         private Stopwatch _stopwatch;
+        private int _level;
+        private int _nonChildExampleGroupCount;
         private int _exampleCount;
         private int _failureCount;
         private int _pendingCount;
 
-        public void Start(ExampleGroup exampleGroup)
+        public void RunStarted()
         {
-            if (_stopwatch == null)
-            {
-                _stopwatch = Stopwatch.StartNew();
-            }
-
-            Console.WriteLine(exampleGroup.Subject);
+            _stopwatch = Stopwatch.StartNew();
+            _level = 0;
         }
 
-        public void Start(Example example)
+        public void ExampleGroupStarted(ExampleGroup exampleGroup)
+        {
+            if (exampleGroup.Parent == null)
+            {
+                if (_nonChildExampleGroupCount > 0)
+                {
+                    Console.WriteLine();
+                }
+
+                _nonChildExampleGroupCount++;
+            }
+
+            Console.WriteLine("{0}{1}", Indent(), exampleGroup.Subject);
+
+            _level++;
+        }
+
+        public void ExampleStarted(Example example)
         {
             _exampleCount++;
 
-            Console.Write("  {0}", example.Description);
+            Console.Write("{0}{1}", Indent(), example.Description);
         }
 
-        public void Pass(Example example)
+        public void ExamplePassed(Example example)
         {
             Console.WriteLine();
         }
 
-        public void Fail(Example example)
+        public void ExampleFailed(Example example)
         {
             _failureCount++;
 
             Console.WriteLine(" (FAILED)");
         }
 
-        public void Pending(Example example)
+        public void ExamplePending(Example example)
         {
             _pendingCount++;
 
             Console.WriteLine(" (PENDING)");
         }
 
-        public void Summarize()
+        public void RunFinished()
         {
             _stopwatch.Stop();
 
@@ -62,6 +77,11 @@ namespace RSpec
             }
 
             Console.WriteLine(counts);
+        }
+
+        private string Indent()
+        {
+            return new string(' ', _level * 2);
         }
     }
 }

@@ -15,21 +15,21 @@ namespace RSpec
 
         public void Run(Reporter reporter)
         {
-            reporter.Start(this);
+            reporter.ExampleStarted(this);
 
             try
             {
                 Block();
 
-                reporter.Pass(this);
+                reporter.ExamplePassed(this);
             }
             catch (NotImplementedException)
             {
-                reporter.Pending(this);
+                reporter.ExamplePending(this);
             }
             catch (Exception)
             {
-                reporter.Fail(this);
+                reporter.ExampleFailed(this);
             }
         }
     }

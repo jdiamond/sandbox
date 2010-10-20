@@ -9,16 +9,19 @@ namespace RSpec
         {
             Subject = subject;
             Examples = new List<Example>();
+            Children = new List<ExampleGroup>();
         }
 
         public string Subject { get; set; }
         public Action BeforeEach { get; set; }
 
         public List<Example> Examples { get; set; }
+        public ExampleGroup Parent { get; set; }
+        public List<ExampleGroup> Children { get; set; }
 
         public void Run(Reporter reporter)
         {
-            reporter.Start(this);
+            reporter.ExampleGroupStarted(this);
 
             foreach (var example in Examples)
             {
@@ -28,6 +31,16 @@ namespace RSpec
                 }
 
                 example.Run(reporter);
+            }
+
+            foreach (var child in Children)
+            {
+                if (BeforeEach != null)
+                {
+                    BeforeEach();
+                }
+
+                child.Run(reporter);
             }
         }
     }

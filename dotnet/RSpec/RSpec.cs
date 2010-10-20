@@ -19,10 +19,13 @@
                     Assert(() => sum == 3);
                 });
 
-                It("can subtract two numbers", () =>
+                Describe("subtraction", () =>
                 {
-                    int difference = calculator.Subtract(1, 2);
-                    Assert(() => difference == 1); // Fail!
+                    It("can subtract two postive numbers", () =>
+                    {
+                        int difference = calculator.Subtract(1, 2);
+                        Assert(() => difference == 1); // Fail!
+                    });
                 });
 
                 It("can divide two numbers");
