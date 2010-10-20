@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace RSpec
+﻿namespace RSpec
 {
-    class Program
+    public class Program : Helpers
     {
         static void Main()
         {
@@ -27,45 +25,6 @@ namespace RSpec
                     Assert(() => difference == -1);
                 });
             });
-        }
-
-        static Action _beforeEach;
-
-        static void BeforeEach(Action action)
-        {
-            _beforeEach = action;
-        }
-
-        static void Describe(string subject, Action action)
-        {
-            Console.WriteLine(subject);
-            action();
-        }
-
-        static void It(string description, Action action)
-        {
-            Console.WriteLine("  {0}", description);
-            if (_beforeEach != null) _beforeEach();
-            action();
-        }
-
-        static void Assert(Func<bool> condition)
-        {
-            if (!condition())
-                throw new Exception("Assertion failed!");
-        }
-    }
-
-    public class Calculator
-    {
-        public int Add(int a, int b)
-        {
-            return a + b;
-        }
-
-        public int Subtract(int a, int b)
-        {
-            return a - b;
         }
     }
 }
