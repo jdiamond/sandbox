@@ -1,6 +1,6 @@
 ﻿namespace RSpec
 {
-    public class Program : Helpers
+    public class Program : Spec
     {
         static void Main()
         {
@@ -27,6 +27,8 @@
 
                 It("can divide two numbers");
             });
+
+            Run();
         }
     }
 }
