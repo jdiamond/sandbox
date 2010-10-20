@@ -7,9 +7,9 @@
             Calculator calculator = null;
 
             BeforeEach(() =>
-                           {
-                               calculator = new Calculator();
-                           });
+            {
+                calculator = new Calculator();
+            });
 
             Describe("Calculator", () =>
             {
@@ -22,8 +22,10 @@
                 It("can subtract two numbers", () =>
                 {
                     int difference = calculator.Subtract(1, 2);
-                    Assert(() => difference == -1);
+                    Assert(() => difference == 1);
                 });
+
+                It("can divide two numbers");
             });
         }
     }
