@@ -46,6 +46,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculator.cs" />
+    <Compile Include="Example.cs" />
+    <Compile Include="ExampleGroup.cs" />
+    <Compile Include="Reporter.cs" />
     <Compile Include="RSpecClass.cs" />
     <Compile Include="Spec.cs" />
     <Compile Include="RSpec.cs" />
