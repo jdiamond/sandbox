@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculator.cs" />
+    <Compile Include="RSpecClass.cs" />
     <Compile Include="Spec.cs" />
     <Compile Include="RSpec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

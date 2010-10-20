@@ -22,7 +22,7 @@
                 It("can subtract two numbers", () =>
                 {
                     int difference = calculator.Subtract(1, 2);
-                    Assert(() => difference == 1);
+                    Assert(() => difference == 1); // Fail!
                 });
 
                 It("can divide two numbers");
