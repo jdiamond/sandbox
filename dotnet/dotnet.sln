@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomTool", "CustomTool\Cu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSpec", "RSpec\RSpec.csproj", "{D74772D0-28F1-47FA-B387-6AB7A4294421}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IteratorExample", "IteratorExample\IteratorExample.csproj", "{BBD3BE2F-7CE4-45CE-80FC-444FA6A4E780}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{D74772D0-28F1-47FA-B387-6AB7A4294421}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D74772D0-28F1-47FA-B387-6AB7A4294421}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D74772D0-28F1-47FA-B387-6AB7A4294421}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBD3BE2F-7CE4-45CE-80FC-444FA6A4E780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBD3BE2F-7CE4-45CE-80FC-444FA6A4E780}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBD3BE2F-7CE4-45CE-80FC-444FA6A4E780}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBD3BE2F-7CE4-45CE-80FC-444FA6A4E780}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
