@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IteratorExample", "Iterator
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NaturalSorting", "NaturalSorting\NaturalSorting.csproj", "{802F0800-BA03-47D7-B355-55365E1FF854}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindsorChildContainers", "WindsorChildContainers\WindsorChildContainers.csproj", "{DA182C63-C13F-407E-86F0-BDB482AB1203}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{802F0800-BA03-47D7-B355-55365E1FF854}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{802F0800-BA03-47D7-B355-55365E1FF854}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{802F0800-BA03-47D7-B355-55365E1FF854}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA182C63-C13F-407E-86F0-BDB482AB1203}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA182C63-C13F-407E-86F0-BDB482AB1203}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA182C63-C13F-407E-86F0-BDB482AB1203}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA182C63-C13F-407E-86F0-BDB482AB1203}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
