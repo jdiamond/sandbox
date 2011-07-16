@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Canvas Text</title>
+        <script src="lib/jscolor-1.3.8/jscolor/jscolor.js"></script>
+        <style>
+            html, body, input, select {
+                margin: 0;
+                padding: 0;
+            }
+            #container {
+                margin: 8px;
+            }
+            #props {
+                margin-top: 8px;
+            }
+            #props div {
+                margin: 4px;
+            }
+            #props label {
+                display: block;
+                float: left;
+                clear: left;
+                width: 100px;
+            }
+            canvas {
+                border: 1px solid #aaa;
+                box-shadow: 4px 4px 6px #888;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <canvas id="canvas" width="320" height="240"></canvas>
+            <div id="props">
+                <div>
+                    <label>Style</label>
+                    <input id="fill" type="radio" name="fillOrStroke" checked> Fill
+                    <input id="stroke" type="radio" name="fillOrStroke"> Stroke
+                </div>
+                <div><label>Text</label><input id="text" value="Hello, canvas!"></div>
+                <div><label>X</label><input id="x" type="range" value="50" min="0" max="320"></div>
+                <div><label>Y</label><input id="y" type="range" value="50" min="0" max="240"></div>
+                <div><label>Color</label><input id="color" class="color" value="000000"></div>
+                <div><label>Font Size</label><input id="fontSize" type="range" value="32" min="0" max="64"></div>
+                <div>
+                    <label>Font Family</label>
+                    <input id="fontFamily">
+                    <select id="fontFamilyList">
+                        <option value="serif">serif</option>
+                        <option value="sans">sans-serif</option>
+                        <option value="monospace">monospace</option>
+                        <option value="fantasy">fantasy</option>
+                        <option value="cursive">cursive</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Text Align</label>
+                    <select id="textAlign">
+                        <option value="start">start</option>
+                        <option value="left">left</option>
+                        <option value="center">center</option>
+                        <option value="right">right</option>
+                        <option value="end">end</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Text Baseline</label>
+                    <select id="textBaseline">
+                        <option value="top">top</option>
+                        <option value="hanging">hanging</option>
+                        <option value="middle">middle</option>
+                        <option value="alphabetic">alphabetic</option>
+                        <option value="ideographic">ideographic</option>
+                        <option value="bottom">bottom</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <script>
+            window.addEventListener('load', load);
+
+            function load() {
+                var canvas = document.getElementById('canvas');
+                var ctx = canvas.getContext('2d');
+
+                // Get references to the controls used in the draw function.
+                var fill = document.getElementById('fill');
+                var stroke = document.getElementById('stroke');
+                var text = document.getElementById('text');
+                var x = document.getElementById('x');
+                var y = document.getElementById('y');
+                var color = document.getElementById('color');
+                var fontSize = document.getElementById('fontSize');
+                var fontFamily = document.getElementById('fontFamily');
+                var fontFamilyList = document.getElementById('fontFamilyList');
+                var textAlign = document.getElementById('textAlign');
+                var textBaseline = document.getElementById('textBaseline');
+
+                // Set the default values.
+                fontFamily.value = fontFamilyList.value;
+
+                // Auto-populate the font family control when a new font is chosen.
+                fontFamilyList.addEventListener('change', function() {
+                    fontFamily.value = fontFamilyList.value;
+                });
+
+                // Do the first draw.
+                draw();
+
+                // Redraw when any of the control values change.
+                var props = document.getElementById('props');
+                props.addEventListener('input', draw);
+
+                // The JSColor control doesn't trigger the input event...
+                props.addEventListener('change', draw);
+
+                // Magic happens here.
+                function draw() {
+                    // Clear the canvas.
+                    ctx.fillStyle = '#eee';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    // Turn the x and y values into numbers.
+                    var xPos = parseInt(x.value, 10);
+                    var yPos = parseInt(y.value, 10);
+
+                    // Draw lines to indicate the x and y.
+                    ctx.beginPath();
+                    ctx.moveTo(0, yPos + 0.5);
+                    ctx.lineTo(canvas.width, yPos + 0.5);
+                    ctx.moveTo(xPos + 0.5, 0);
+                    ctx.lineTo(xPos + 0.5, canvas.height);
+                    ctx.closePath();
+                    ctx.strokeStyle = '#ccc';
+                    ctx.stroke();
+
+                    // Render the text.
+                    if (text.value) {
+                        ctx.fillStyle = color.value;
+                        ctx.strokeStyle = color.value;
+                        ctx.font = fontSize.value + 'pt ' + fontFamily.value;
+                        ctx.textAlign = textAlign.value;
+                        ctx.textBaseline = textBaseline.value;
+                        if (fill.checked) {
+                            ctx.fillText(text.value, xPos, yPos);
+                        } else {
+                            ctx.strokeText(text.value, xPos, yPos);
+                        }
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
