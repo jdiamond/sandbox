@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Web Workers</title>
+    </head>
+    <body>
+        <button id="start">Start</button>
+        <button id="listen">Listen</button>
+        <button id="speak">Speak</button>
+        <button id="stop">Stop</button>
+        <script>
+            var startButton = document.getElementById('start');
+            startButton.addEventListener('click', start, false);
+
+            var listenButton = document.getElementById('listen');
+            listenButton.addEventListener('click', listen, false);
+
+            var speakButton = document.getElementById('speak');
+            speakButton.addEventListener('click', speak, false);
+
+            var stopButton = document.getElementById('stop');
+            stopButton.addEventListener('click', stop, false);
+
+            var worker;
+
+            function start(e) {
+                console.log('starting worker');
+                worker = new Worker('web-worker.js');
+            }
+
+            function listen() {
+                console.log('listening');
+                worker.onmessage = function(e) {
+                    console.log('worker said: ' + e.data);
+                }
+            }
+
+            function speak() {
+                worker.postMessage('hello');
+            }
+
+            function stop() {
+                console.log('stopping worker');
+                worker.terminate();
+            }
+        </script>
+    </body>
+</html>
