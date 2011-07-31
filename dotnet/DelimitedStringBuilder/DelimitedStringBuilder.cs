@@ -6,88 +6,119 @@ namespace DelimitedStringBuilder
 {
     public class DelimitedStringBuilder<T>
     {
-        private readonly List<T> _items = new List<T>();
+        private readonly StringBuilder _builder = new StringBuilder();
 
         public DelimitedStringBuilder()
-            : this(", ", DefaultFormatter)
         {
+            Separator = ", ";
         }
 
-        public DelimitedStringBuilder(string separator)
-            : this(separator, DefaultFormatter)
-        {
-        }
+        /// <summary>
+        /// Header for the whole string, if there are any items.
+        /// </summary>
+        public string Header { get; set; }
 
-        public DelimitedStringBuilder(string separator, Func<T, string> formatter)
-        {
-            Separator = separator;
-            Formatter = formatter;
-        }
-
-        public string Separator { get; set; }
-        public Func<T, string> Formatter { get; set;  }
+        /// <summary>
+        /// Prefix to appear before each item.
+        /// </summary>
         public string Prefix { get; set; }
+
+        /// <summary>
+        /// Delegate to format items as strings. When T is a reference type, should handle nulls.
+        /// </summary>
+        public Func<T, string> Formatter { get; set; }
+
+        /// <summary>
+        /// Separator between each item.
+        /// </summary>
+        public string Separator { get; set; }
+
+        /// <summary>
+        /// Suffix to appear after each item.
+        /// </summary>
         public string Suffix { get; set; }
-        public string ItemPrefix { get; set; }
-        public string ItemSuffix { get; set; }
+
+        /// <summary>
+        /// Footer for the whole string, if there are any items.
+        /// </summary>
+        public string Footer { get; set; }
+
+        /// <summary>
+        /// Value to return if no items are added.
+        /// </summary>
         public string EmptyValue { get; set; }
 
-        public DelimitedStringBuilder<T> Add(T item)
+        public DelimitedStringBuilder<T> Append(T item)
         {
-            _items.Add(item);
+            AppendCore(item, _builder);
 
             return this;
         }
 
-        public string Build()
+        private void AppendCore(T item, StringBuilder builder)
         {
-            if (_items.Count == 0)
+            var value = Format(item);
+
+            if (string.IsNullOrEmpty(value))
+            {
+                return;
+            }
+
+            if (builder.Length > 0)
+            {
+                builder.Append(Separator);
+            }
+
+            if (Prefix != null)
+            {
+                builder.Append(Prefix);
+            }
+
+            builder.Append(value);
+
+            if (Suffix != null)
+            {
+                builder.Append(Suffix);
+            }
+        }
+
+        private string Format(T item)
+        {
+            return Formatter != null ? Formatter(item) : string.Format("{0}", item);
+        }
+
+        public DelimitedStringBuilder<T> Clear()
+        {
+            _builder.Length = 0;
+
+            return this;
+        }
+
+        public override string ToString()
+        {
+            return ToStringCore(_builder);
+        }
+
+        public string ToString(IEnumerable<T> items)
+        {
+            var builder = new StringBuilder();
+            
+            foreach (var item in items)
+            {
+                AppendCore(item, builder);
+            }
+
+            return ToStringCore(builder);
+        }
+
+        private string ToStringCore(StringBuilder builder)
+        {
+            if (builder.Length == 0)
             {
                 return EmptyValue ?? "";
             }
 
-            var stringBuilder = new StringBuilder();
-
-            if (Prefix != null)
-            {
-                stringBuilder.Append(Prefix);
-            }
-
-            bool needsSeparator = false;
-
-            foreach (var item in _items)
-            {
-                if (needsSeparator)
-                {
-                    stringBuilder.Append(Separator);
-                }
-
-                if (ItemPrefix != null)
-                {
-                    stringBuilder.Append(ItemPrefix);
-                }
-
-                stringBuilder.Append(Formatter(item));
-
-                if (ItemSuffix != null)
-                {
-                    stringBuilder.Append(ItemSuffix);
-                }
-
-                needsSeparator = true;
-            }
-
-            if (Suffix != null)
-            {
-                stringBuilder.Append(Suffix);
-            }
-
-            return stringBuilder.ToString();
-        }
-
-        private static string DefaultFormatter(T item)
-        {
-            return item.ToString();
+            return (Header ?? "") + builder + (Footer ?? "");
         }
     }
 }
