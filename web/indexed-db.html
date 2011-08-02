@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Indexed DB</title>
+    </head>
+    <body>
+        <input id="value">
+        <button id="save">Save</button>
+        <button id="load">Load</button>
+        <input type="reset">
+        <script>
+            (function() {
+                var indexedDB = window.indexedDB ||
+                                window.webkitIndexedDB ||
+                                window.mozIndexedDB;
+
+                var IDBTransaction = window.IDBTransaction ||
+                                     window.webkitIDBTransaction;
+
+                var db = null;
+
+                var request = indexedDB.open('stuff');
+
+                request.onsuccess = function() {
+                    console.log('open success');
+                    db = request.result;
+                    if (db.version !== '1') {
+                        create();
+                    }
+                };
+
+                request.onerror = function() {
+                    console.log('open error');
+                };
+
+                function create() {
+                    var setVersionRequest = db.setVersion('1');
+                    setVersionRequest.onsuccess = function() {
+                        console.log('setVersion success');
+
+                        var store = db.createObjectStore('objects', {
+                            keyPath: 'id'
+                        });
+                    };
+                    setVersionRequest.onerror = function() {
+                        console.log('setVersion error');
+                    };
+                }
+
+                var value = document.getElementById('value');
+
+                var saveButton = document.getElementById('save');
+                saveButton.addEventListener('click', save, false);
+
+                var loadButton = document.getElementById('load');
+                loadButton.addEventListener('click', load, false);
+
+                function save() {
+                    console.log('saving');
+                    if (!db) {
+                        console.log('db not open yet');
+                        return;
+                    }
+
+                    var record = {
+                        id: 1,
+                        value: value.value
+                    };
+
+                    var tx = db.transaction(['objects'], IDBTransaction.READ_WRITE);
+                    tx.oncomplete = function() {
+                        console.log('transaction complete');
+                    };
+
+                    var store = tx.objectStore('objects');
+
+                    store.put(record);
+                }
+
+                function load() {
+                    console.log('loading');
+                    if (!db) {
+                        console.log('db not open yet');
+                        return;
+                    }
+
+                    var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
+
+                    var store = tx.objectStore('objects');
+
+                    var request = store.get(1);
+
+                    request.onsuccess = function() {
+                        console.log('get success');
+                        value.value = request.result.value;
+                    };
+
+                    request.onerror = function() {
+                        console.log('get error');
+                    };
+                }
+            })();
+        </script>
+    </body>
+</html>
