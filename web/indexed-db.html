@@ -3,569 +3,369 @@
     <head>
         <title>Indexed DB Examples</title>
         <style>
-            details {
-                display: block;
-                margin-bottom: 2em;
-            }
-            summary {
-                font-size: large;
-                font-weight: bold;
+            pre {
+                border: 1px solid #ccc;
             }
         </style>
     </head>
     <body>
         <h1>Indexed DB Examples</h1>
         <p>Open your JavaScript console to see log messages.</p>
-        <p>Be sure to <code>open</code> and <code>put</code> before anything else.</p>
+        <p>Be sure to run the <code>indexdDB.open()</code> and
+        <code>store.put()</code> examples before anything else.</p>
 
-        <form>
-            <details>
-                <summary>open</summary>
-                <p>This opens the DB and creates the object store, if necessary. Do this first.</p>
-                <p><button id="openButton">Go</button></p>
-            </details>
-
-            <details>
-                <summary>put</summary>
-                <p>This puts 100 records with randomly generated names into the DB.
-                Do this before trying to get anything or open any cursors.</p>
-                <p><button id="putButton">Go</button></p>
-            </details>
-
-            <details>
-                <summary>get</summary>
-                <p>This gets the record with the specificed ID.</p>
-                <p>
-                    <label>ID:</label>
-                    <input id="getID" value="1">
-                    <button id="getButton">Go</button>
-                    <span id="getResult"></span>
-                </p>
-            </details>
-
-            <details>
-                <summary>openCursor</summary>
-                <p>This opens a cursor and displays all of the records in the DB.</p>
-                <p>
-                    <button id="openCursorButton">Go</button>
-                    <button id="openCursorClearButton">Clear</button>
-                </p>
-                <table id="openCursorResult">
-                </table>
-            </details>
-
-            <details>
-                <summary>openCursor(range)</summary>
-                <p>This uses a range when opening the cursor.</p>
-                <p>
-                    <label>Lower:</label>
-                    <input id="openCursorRangeLower" type="number" value="10">
-                    <label>Upper:</label>
-                    <input id="openCursorRangeUpper" type="number" value="20">
-                    <button id="openCursorRangeButton">Go</button>
-                    <button id="openCursorRangeClearButton">Clear</button>
-                </p>
-                <table id="openCursorRangeResult">
-                </table>
-            </details>
-
-            <details>
-                <summary>index.openCursor</summary>
-                <p>This uses the <code>firstName</code> index's cursor to retrieve records.</p>
-                <p>
-                    <button id="indexOpenCursorButton">Go</button>
-                    <button id="indexOpenCursorClearButton">Clear</button>
-                </p>
-                <table id="indexOpenCursorResult">
-                </table>
-            </details>
-
-            <details>
-                <summary>index.openCursor(range)</summary>
-                <p>This uses the <code>firstName</code> index's cursor to retrieve records using a range.</p>
-                <p>
-                    <label>Lower:</label>
-                    <input id="indexOpenCursorRangeLower" type="text" value="D">
-                    <label>Upper:</label>
-                    <input id="indexOpenCursorRangeUpper" type="text" value="J">
-                    <button id="indexOpenCursorRangeButton">Go</button>
-                    <button id="indexOpenCursorRangeClearButton">Clear</button>
-                </p>
-                <table id="indexOpenCursorRangeResult">
-                </table>
-            </details>
-
-            <details>
-                <summary>close</summary>
-                <p>This closes the DB.</p>
-                <p><button id="closeButton">Go</button></p>
-            </details>
-
-            <details>
-                <summary>deleteObjectStore</summary>
-                <p>This deletes the object store. The DB has to be closed first.</p>
-                <p><button id="deleteObjectStoreButton">Go</button></p>
-            </details>
-
-            <details>
-                <summary>deleteDatabase</summary>
-                <p>This deletes the DB. The DB has to be closed first.</p>
-                <p><button id="deleteDatabaseButton">Go</button></p>
-            </details>
-        </form>
-
+        <script src="http://code.jquery.com/jquery-1.6.2.js"></script>
         <script src="Faker.js"></script>
 
         <script>
-            (function() {
-                // Normalize the names.
+                window.indexedDB = window.indexedDB ||
+                                   window.webkitIndexedDB ||
+                                   window.mozIndexedDB;
+                window.IDBTransaction = window.IDBTransaction ||
+                                        window.webkitIDBTransaction ||
+                                        window.mozIDBTransaction;
+                window.IDBKeyRange = window.IDBKeyRange ||
+                                     window.webkitIDBKeyRange ||
+                                     window.mozIDBKeyRange;
+        </script>
 
-                var indexedDB = window.indexedDB ||
-                                window.webkitIndexedDB ||
-                                window.mozIndexedDB;
+        <!-- Examples begin here. -->
 
-                var IDBTransaction = window.IDBTransaction ||
-                                     window.webkitIDBTransaction ||
-                                     window.mozIDBTransaction;
+        <section>
+            <h1>indexedDB.open(name)</h1>
+            <p>Opens the database named <input name="name" value="stuff">.</p>
+        </section>
 
-                var IDBKeyRange = window.IDBKeyRange ||
-                                  window.webkitIDBKeyRange ||
-                                  window.mozIDBKeyRange;
+        <script data-name="openDB" data-args="name" data-result="db">
+            function openDB(name, success, error) {
+                console.log('about to open db asynchronously');
+                var request = indexedDB.open(name);
+                console.log('db opened, wait for success');
 
-                // Our "global" DB variable.
+                request.onsuccess = function() {
+                    console.log('open success');
+                    var db = request.result;
+                    console.log('db.version is ' + db.version);
 
-                var db = null;
-
-                // Make sure DB is closed.
-
-                window.onunload = function() {
-                    console.log('window unloading');
-                    if (db) {
-                        console.log('closing db');
-                        db.close();
-                        console.log('db closed');
+                    if (db.version === '1') {
+                        console.log('no need to create object store');
+                        success(db);
                     } else {
-                        console.log('db not open, nothing to close');
+                        console.log('setting version to 1 asynchronously');
+                        var setVersionRequest = db.setVersion('1');
+                        console.log('version set to 1, wait for success');
+
+                        setVersionRequest.onsuccess = function() {
+                            console.log('setVersion success');
+
+                            console.log('about to create object store');
+                            var store = db.createObjectStore('objects', {
+                                keyPath: 'id'
+                            });
+                            console.log('object store created');
+
+                            console.log('about to create index');
+                            var index = store.createIndex('firstNameIndex', 'firstName', { unique: false });
+                            console.log('index created');
+
+                            success(db);
+                        };
+
+                        setVersionRequest.onerror = function() {
+                            console.log('setVersion error');
+                            error();
+                        };
                     }
                 };
 
-                // DOM hookups. OMG, not using jQuery blows.
+                request.onerror = function() {
+                    console.log('open error');
+                    error();
+                };
+            }
+        </script>
 
-                var openButton = document.getElementById('openButton');
-                openButton.addEventListener('click', open, false);
+        <section>
+            <h1>store.put(record)</h1>
+            <p>Puts <input name="count" type="number" value="100"> records into the object store.</p>
+        </section>
 
-                var putButton = document.getElementById('putButton');
-                putButton.addEventListener('click', put, false);
+        <script data-name="putRecords" data-args="db count">
+            function putRecords(db, count, success, error) {
+                var tx = db.transaction(['objects'], IDBTransaction.READ_WRITE);
 
-                var getID = document.getElementById('getID');
-                var getButton = document.getElementById('getButton');
-                getButton.addEventListener('click', get, false);
-                var getResult = document.getElementById('getResult');
+                tx.oncomplete = function() {
+                    console.log('transaction complete');
+                    success();
+                };
 
-                var openCursorButton = document.getElementById('openCursorButton');
-                openCursorButton.addEventListener('click', openCursor, false);
-                var openCursorClearButton = document.getElementById('openCursorClearButton');
-                openCursorClearButton.addEventListener('click', openCursorClear, false);
-                var openCursorResult = document.getElementById('openCursorResult');
+                var store = tx.objectStore('objects');
 
-                var openCursorRangeButton = document.getElementById('openCursorRangeButton');
-                openCursorRangeButton.addEventListener('click', openCursorRange, false);
-                var openCursorRangeClearButton = document.getElementById('openCursorRangeClearButton');
-                openCursorRangeClearButton.addEventListener('click', openCursorRangeClear, false);
-                var openCursorRangeLower = document.getElementById('openCursorRangeLower');
-                var openCursorRangeUpper = document.getElementById('openCursorRangeUpper');
-                var openCursorRangeResult = document.getElementById('openCursorRangeResult');
+                for (var id = 1; id <= count; id++) {
+                    var record = {
+                        id: id,
+                        firstName: Faker.Name.firstName(),
+                        lastName: Faker.Name.lastName()
+                    };
 
-                var indexOpenCursorButton = document.getElementById('indexOpenCursorButton');
-                indexOpenCursorButton.addEventListener('click', indexOpenCursor, false);
-                var indexOpenCursorClearButton = document.getElementById('indexOpenCursorClearButton');
-                indexOpenCursorClearButton.addEventListener('click', indexOpenCursorClear, false);
-                var indexOpenCursorResult = document.getElementById('indexOpenCursorResult');
+                    store.put(record);
+                }
+            }
+        </script>
 
-                var indexOpenCursorRangeButton = document.getElementById('indexOpenCursorRangeButton');
-                indexOpenCursorRangeButton.addEventListener('click', indexOpenCursorRange, false);
-                var indexOpenCursorRangeClearButton = document.getElementById('indexOpenCursorRangeClearButton');
-                indexOpenCursorRangeClearButton.addEventListener('click', indexOpenCursorRangeClear, false);
-                var indexOpenCursorRangeLower = document.getElementById('indexOpenCursorRangeLower');
-                var indexOpenCursorRangeUpper = document.getElementById('indexOpenCursorRangeUpper');
-                var indexOpenCursorRangeResult = document.getElementById('indexOpenCursorRangeResult');
+        <section>
+            <h1>store.get(key)</h1>
+            <p>Gets the record with the ID of <input name="id" type="number" value="42">.</p>
+        </section>
 
-                var closeButton = document.getElementById('closeButton');
-                closeButton.addEventListener('click', close, false);
+        <script data-name="getRecord" data-args="db id" data-emits-records="true">
+            function getRecord(db, id, processRecord, success, error) {
+                var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
 
-                var deleteObjectStoreButton = document.getElementById('deleteObjectStoreButton');
-                deleteObjectStoreButton.addEventListener('click', deleteObjectStore, false);
+                var store = tx.objectStore('objects');
 
-                var deleteDatabaseButton = document.getElementById('deleteDatabaseButton');
-                deleteDatabaseButton.addEventListener('click', deleteDatabase, false);
+                var request = store.get(id);
 
-                // Functions that do the actual work.
+                request.onsuccess = function() {
+                    processRecord(request.result);
+                    success();
+                };
 
-                function open(e) {
-                    console.log('begin open');
-                    e.preventDefault();
+                request.onerror = function() {
+                    error();
+                };
+            }
+        </script>
 
-                    if (db) {
-                        console.log('db is already open, close it first');
-                        return;
+        <section>
+            <h1>store.openCursor()</h1>
+            <p>Gets all the records from the object store.</p>
+        </section>
+
+        <script data-name="getRecords" data-args="db" data-emits-records="true">
+            function getRecords(db, processRecord, success, error) {
+                var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
+
+                var store = tx.objectStore('objects');
+
+                var cursor = store.openCursor();
+
+                cursor.onsuccess = function(e) {
+                    var cursor = e.target.result;
+                    if (cursor) {
+                        processRecord(cursor.value);
+                        cursor.continue();
+                    } else {
+                        success();
+                    }
+                };
+            }
+        </script>
+
+        <section>
+            <h1>store.openCursor(range)</h1>
+            <p>Gets the records from the object store with ids between
+            <input name="lower" type="number" value="10"> and
+            <input name="upper" type="number" value="20">.</p>
+        </section>
+
+        <script data-name="getRecordsInRange" data-args="db lower upper" data-emits-records="true">
+            function getRecordsInRange(db, lower, upper, processRecord, success, error) {
+                var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
+
+                var store = tx.objectStore('objects');
+
+                var range;
+
+                if (lower && upper) {
+                    range = IDBKeyRange.bound(lower, upper);
+                } else if (lower) {
+                    range = IDBKeyRange.lowerBound(lower);
+                } else if (upper) {
+                    range = IDBKeyRange.upperBound(upper);
+                }
+
+                var cursor = store.openCursor(range);
+
+                cursor.onsuccess = function(e) {
+                    var cursor = e.target.result;
+                    if (cursor) {
+                        processRecord(cursor.value);
+                        cursor.continue();
+                    } else {
+                        success();
+                    }
+                };
+            }
+        </script>
+
+        <section>
+            <h1>index.openCursor()</h1>
+            <p>Gets the records using the "firstName" index.</p>
+        </section>
+
+        <script data-name="getRecordsByFirstName" data-args="db" data-emits-records="true">
+            function getRecordsByFirstName(db, processRecord, success, error) {
+                var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
+
+                var store = tx.objectStore('objects');
+
+                var index = store.index('firstNameIndex');
+
+                var cursor = index.openCursor();
+
+                cursor.onsuccess = function(e) {
+                    var cursor = e.target.result;
+                    if (cursor) {
+                        processRecord(cursor.value);
+                        cursor.continue();
+                    } else {
+                        success();
+                    }
+                };
+            }
+        </script>
+
+        <section>
+            <h1>index.openCursor(range)</h1>
+            <p>Gets the records with first names between
+            <input name="lower" value="D"> and
+            <input name="upper" value="J">.</p>
+        </section>
+
+        <script data-name="getRecordsByFirstNameInRange" data-args="db lower upper" data-emits-records="true">
+            function getRecordsByFirstNameInRange(db, lower, upper, processRecord, success, error) {
+                var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
+
+                var store = tx.objectStore('objects');
+
+                var index = store.index('firstNameIndex');
+
+                var range;
+
+                if (lower && upper) {
+                    range = IDBKeyRange.bound(lower, upper);
+                } else if (lower) {
+                    range = IDBKeyRange.lowerBound(lower);
+                } else if (upper) {
+                    range = IDBKeyRange.upperBound(upper);
+                }
+
+                var cursor = index.openCursor(range);
+
+                cursor.onsuccess = function(e) {
+                    var cursor = e.target.result;
+                    if (cursor) {
+                        cursor.continue();
+                        processRecord(cursor.value);
+                    } else {
+                        success();
+                    }
+                };
+            }
+        </script>
+
+        <!-- Examples stop here. -->
+
+        <script>
+            $(function() {
+                var results = {};
+
+                $('section').each(function() {
+                    var $section = $(this),
+                        $script = $section.next('script'),
+                        functionName = $script.data('name'),
+                        argNames = $script.data('args').split(' '),
+                        resultName = $script.data('result'),
+                        emitsRecords = $script.data('emitsRecords'),
+                        $table = null,
+                        $buttons = $('<p>').appendTo($section);
+
+                    $('<button>Go</button>')
+                        .appendTo($buttons)
+                        .click(function(e) {
+                            var args = $.map(argNames, getArg);
+                            if (emitsRecords) {
+                                args.push(addRecordToTable);
+                            }
+                            args.push(function(result) {
+                                if (resultName) {
+                                    results[resultName] = result;
+                                }
+                                console.log(functionName + ' succeeded');
+                            });
+                            args.push(function() {
+                                alert(functionName + ' failed =(');
+                            });
+                            window[functionName].apply(window, args);
+                        });
+
+                    if (emitsRecords) {
+                        $('<button>Clear</button>')
+                            .appendTo($buttons)
+                            .click(function(e) {
+                                clearTable();
+                            });
                     }
 
-                    console.log('about to open db asynchronously');
-                    var request = indexedDB.open('stuff');
-                    console.log('db opened, wait for success');
+                    $('<button>View Source</button>')
+                        .appendTo($buttons)
+                        .click(function(e) {
+                            var $button = $(this);
+                            if (!$button.data('source')) {
+                                $button.data('source', $('<pre>').text($script.text())
+                                                                 .appendTo($section));
+                                $button.text('Hide Source');
+                            } else {
+                                $button.data('source').remove();
+                                $button.removeData('source');
+                                $button.text('View Source');
+                            }
+                        });
 
-                    request.onsuccess = function() {
-                        console.log('open success');
-                        db = request.result;
-                        console.log('db.version is ' + db.version);
-                        if (db.version === '1') {
-                            console.log('no need to create object store');
-                        } else {
-                            console.log('setting version to 1 asynchronously');
-                            var setVersionRequest = db.setVersion('1');
-                            console.log('version set to 1, wait for success');
-                            setVersionRequest.onsuccess = function() {
-                                console.log('setVersion success');
-                                console.log('about to create object store');
-                                var store = db.createObjectStore('objects', {
-                                    keyPath: 'id'
-                                });
-                                console.log('object store created');
-                                console.log('about to create index');
-                                var index = store.createIndex('firstNameIndex', 'firstName', { unique: false });
-                                console.log('index created');
-                            };
-                            setVersionRequest.onerror = function() {
-                                console.log('setVersion error');
-                            };
+                    if (emitsRecords) {
+                        $table = $('<table>').appendTo($section);
+                    }
+
+                    function getArg(name) {
+                        var arg = results[name];
+                        var $elem = $('[name="' + name + '"]', $section);
+                        if (!$elem.length) {
+                            if (!arg) throw 'missing ' + name;
+                            return arg;
                         }
-                    };
-
-                    request.onerror = function() {
-                        console.log('open error');
-                    };
-
-                    console.log('end open');
-                }
-
-                function put(e) {
-                    console.log('begin put');
-                    e.preventDefault();
-
-                    if (!db) {
-                        console.log('db not open yet');
-                        return;
+                        if ($elem.is('input:checkbox')) return $elem.prop('checked');
+                        if ($elem.prop('type') === 'number') return parseInt($elem.val(), 10);
+                        return $elem.val();
                     }
 
-                    var tx = db.transaction(['objects'], IDBTransaction.READ_WRITE);
-                    tx.oncomplete = function() {
-                        console.log('transaction complete');
-                    };
-
-                    var store = tx.objectStore('objects');
-
-                    for (var i = 1; i <= 100; i += 1) {
-                        var record = {
-                            id: i,
-                            firstName: Faker.Name.firstName(),
-                            lastName: Faker.Name.lastName()
-                        }
-                        store.put(record);
+                    function addRecordToTable(record) {
+                        var newRow = $table[0].insertRow(-1);
+                        var idCell = newRow.insertCell(-1);
+                        idCell.innerHTML = record.id;
+                        var firstNameCell = newRow.insertCell(-1);
+                        firstNameCell.innerHTML = record.firstName;
+                        var lastNameCell = newRow.insertCell(-1);
+                        lastNameCell.innerHTML = record.lastName;
                     }
 
-                    console.log('end put');
-                }
-
-                function get(e) {
-                    console.log('begin get');
-                    e.preventDefault();
-
-                    if (!db) {
-                        console.log('db not open yet');
-                        return;
+                    function clearTable() {
+                        $table.empty();
                     }
+                });
 
-                    var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
-
-                    var store = tx.objectStore('objects');
-
-                    var request = store.get(+getID.value);
-
-                    request.onsuccess = function() {
-                        console.log('get success');
-                        getResult.innerHTML = request.result.firstName + ' ' + request.result.lastName;
-                    };
-
-                    request.onerror = function() {
-                        console.log('get error');
-                    };
-
-                    console.log('end put');
-                }
-
-                function openCursor(e) {
-                    console.log('begin openCursor');
-                    e.preventDefault();
-
-                    if (!db) {
-                        console.log('db not open yet');
-                        return;
+                window.onunload = function() {
+                    console.log('window unloading');
+                    if (results.db) {
+                        console.log('closing db');
+                        results.db.close();
+                        console.log('db closed');
+                    } else {
+                        console.log('no db to close');
                     }
+                };
 
-                    var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
-
-                    var store = tx.objectStore('objects');
-
-                    var cursor = store.openCursor();
-
-                    cursor.onsuccess = function(e) {
-                        var cursor = e.target.result;
-                        if (cursor) {
-                            addRecordToTable(openCursorResult, cursor);
-                            cursor.continue();
-                        } else {
-                            console.log('cursor done');
-                        }
-                    };
-
-                    console.log('end openCursor');
-                }
-
-                function openCursorClear(e) {
-                    e.preventDefault();
-                    clearTable(openCursorResult);
-                }
-
-                function openCursorRange(e) {
-                    console.log('begin openCursor(range)');
-                    e.preventDefault();
-
-                    if (!db) {
-                        console.log('db not open yet');
-                        return;
-                    }
-
-                    var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
-
-                    var store = tx.objectStore('objects');
-
-                    var lower = +openCursorRangeLower.value;
-                    var upper = +openCursorRangeUpper.value;
-
-                    var range;
-
-                    if (lower && upper) {
-                        range = IDBKeyRange.bound(lower, upper);
-                    } else if (lower) {
-                        range = IDBKeyRange.lowerBound(lower);
-                    } else if (upper) {
-                        range = IDBKeyRange.upperBound(upper);
-                    }
-
-                    var cursor = store.openCursor(range);
-
-                    cursor.onsuccess = function(e) {
-                        var cursor = e.target.result;
-                        if (cursor) {
-                            addRecordToTable(openCursorRangeResult, cursor);
-                            cursor.continue();
-                        } else {
-                            console.log('openCursorRange cursor done');
-                        }
-                    };
-
-                    console.log('end openCursor(range)');
-                }
-
-                function openCursorRangeClear(e) {
-                    e.preventDefault();
-                    clearTable(openCursorRangeResult);
-                }
-
-                function indexOpenCursor(e) {
-                    console.log('begin index.openCursor');
-                    e.preventDefault();
-
-                    if (!db) {
-                        console.log('db not open yet');
-                        return;
-                    }
-
-                    var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
-
-                    var store = tx.objectStore('objects');
-
-                    var index = store.index('firstNameIndex');
-
-                    var cursor = index.openCursor();
-
-                    cursor.onsuccess = function(e) {
-                        var cursor = e.target.result;
-                        if (cursor) {
-                            addRecordToTable(indexOpenCursorResult, cursor);
-                            cursor.continue();
-                        } else {
-                            console.log('indexOpenCursor cursor done');
-                        }
-                    };
-
-                    console.log('end index.openCursor');
-                }
-
-                function indexOpenCursorClear(e) {
-                    e.preventDefault();
-                    clearTable(indexOpenCursorResult);
-                }
-
-                function indexOpenCursorRange(e) {
-                    console.log('begin index.openCursor(range)');
-                    e.preventDefault();
-
-                    if (!db) {
-                        console.log('db not open yet');
-                        return;
-                    }
-
-                    var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
-
-                    var store = tx.objectStore('objects');
-
-                    var index = store.index('firstNameIndex');
-
-                    var lower = indexOpenCursorRangeLower.value;
-                    var upper = indexOpenCursorRangeUpper.value;
-
-                    var range;
-
-                    if (lower && upper) {
-                        range = IDBKeyRange.bound(lower, upper);
-                    } else if (lower) {
-                        range = IDBKeyRange.lowerBound(lower);
-                    } else if (upper) {
-                        range = IDBKeyRange.upperBound(upper);
-                    }
-
-                    var cursor = index.openCursor(range);
-
-                    cursor.onsuccess = function(e) {
-                        var cursor = e.target.result;
-                        if (cursor) {
-                            addRecordToTable(indexOpenCursorRangeResult, cursor);
-                            cursor.continue();
-                        } else {
-                            console.log('indexOpenCursorRange cursor done');
-                        }
-                    };
-
-                    console.log('end index.openCursor(range)');
-                }
-
-                function indexOpenCursorRangeClear(e) {
-                    e.preventDefault();
-                    clearTable(indexOpenCursorRangeResult);
-                }
-
-                function close(e) {
-                    console.log('begin close');
-                    e.preventDefault();
-
-                    if (!db) {
-                        console.log('db not open yet');
-                        return;
-                    }
-
-                    console.log('about to close');
-                    db.close();
-                    console.log('closed');
-                    db = null;
-
-                    console.log('end close');
-                }
-
-                function deleteObjectStore(e) {
-                    console.log('begin deleteObjectStore');
-                    e.preventDefault();
-
-                    if (db) {
-                        console.log('db is open, close it first');
-                        return;
-                    }
-
-                    console.log('db will be opened asyncronously');
-                    var request = indexedDB.open('stuff');
-                    console.log('db opened, wait for success');
-
-                    request.onsuccess = function() {
-                        console.log('open success');
-                        db = request.result;
-                        console.log('version is ' + db.version);
-                        if (db.version !== '1') {
-                            console.log('nothing to delete');
-                        } else {
-                            console.log('setting version to 0 asynchronously');
-                            var setVersionRequest = db.setVersion('0');
-                            console.log('version set to 0, wait for success');
-                            setVersionRequest.onsuccess = function() {
-                                console.log('setVersion success');
-                                console.log('about to delete object store');
-                                db.deleteObjectStore('objects');
-                                console.log('object store deleted');
-                                console.log('db is still open, but object store is gone!');
-                            };
-                            setVersionRequest.onerror = function() {
-                                console.log('setVersion error');
-                            };
-                        }
-                    };
-
-                    request.onerror = function() {
-                        console.log('open error');
-                    };
-
-                    console.log('end deleteObjectStore');
-                }
-
-                function deleteDatabase(e) {
-                    console.log('begin deleteDatabase');
-                    e.preventDefault();
-
-                    if (db) {
-                        console.log('db is open');
-                        return;
-                    }
-
-                    var request = indexedDB.deleteDatabase('stuff');
-                    request.onsuccess = function() {
-                        console.log('deleteDatabase success');
-                        db = null;
-                    };
-
-                    request.onerror = function() {
-                        console.log('deleteDatabase error');
-                    };
-
-                    console.log('end deleteDatabase');
-                }
-
-                // Utility functions.
-
-                function addRecordToTable(table, cursor) {
-                    var newRow = table.insertRow(-1);
-                    var idCell = newRow.insertCell(-1);
-                    idCell.innerHTML = cursor.value.id;
-                    var firstNameCell = newRow.insertCell(-1);
-                    firstNameCell.innerHTML = cursor.value.firstName;
-                    var lastNameCell = newRow.insertCell(-1);
-                    lastNameCell.innerHTML = cursor.value.lastName;
-                }
-
-                function clearTable(table) {
-                    while (table.rows.length > 0) {
-                        table.deleteRow(table.rows.length - 1);
-                    }
-                }
-
-            })();
+            });
         </script>
     </body>
 </html>
