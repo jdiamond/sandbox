@@ -15,9 +15,13 @@
         <code>store.put()</code> examples before anything else.</p>
 
         <script src="http://code.jquery.com/jquery-1.6.2.js"></script>
-        <script src="Faker.js"></script>
+        <script src="ex.js"></script>
+        <script src="Faker.js" charset="utf-8"></script>
 
-        <script>
+        <script data-set-up="setUp"
+                data-tear-down="tearDown"
+                data-report-record="addRecordToTable">
+            function setUp() {
                 window.indexedDB = window.indexedDB ||
                                    window.webkitIndexedDB ||
                                    window.mozIndexedDB;
@@ -27,345 +31,263 @@
                 window.IDBKeyRange = window.IDBKeyRange ||
                                      window.webkitIDBKeyRange ||
                                      window.mozIDBKeyRange;
-        </script>
-
-        <!-- Examples begin here. -->
-
-        <section>
-            <h1>indexedDB.open(name)</h1>
-            <p>Opens the database named <input name="name" value="stuff">.</p>
-        </section>
-
-        <script data-name="openDB" data-args="name" data-result="db">
-            function openDB(name, success, error) {
-                console.log('about to open db asynchronously');
-                var request = indexedDB.open(name);
-                console.log('db opened, wait for success');
-
-                request.onsuccess = function() {
-                    console.log('open success');
-                    var db = request.result;
-                    console.log('db.version is ' + db.version);
-
-                    if (db.version === '1') {
-                        console.log('no need to create object store');
-                        success(db);
-                    } else {
-                        console.log('setting version to 1 asynchronously');
-                        var setVersionRequest = db.setVersion('1');
-                        console.log('version set to 1, wait for success');
-
-                        setVersionRequest.onsuccess = function() {
-                            console.log('setVersion success');
-
-                            console.log('about to create object store');
-                            var store = db.createObjectStore('objects', {
-                                keyPath: 'id'
-                            });
-                            console.log('object store created');
-
-                            console.log('about to create index');
-                            var index = store.createIndex('firstNameIndex', 'firstName', { unique: false });
-                            console.log('index created');
-
-                            success(db);
-                        };
-
-                        setVersionRequest.onerror = function() {
-                            console.log('setVersion error');
-                            error();
-                        };
-                    }
-                };
-
-                request.onerror = function() {
-                    console.log('open error');
-                    error();
-                };
             }
-        </script>
 
-        <section>
-            <h1>store.put(record)</h1>
-            <p>Puts <input name="count" type="number" value="100"> records into the object store.</p>
-        </section>
-
-        <script data-name="putRecords" data-args="db count">
-            function putRecords(db, count, success, error) {
-                var tx = db.transaction(['objects'], IDBTransaction.READ_WRITE);
-
-                tx.oncomplete = function() {
-                    console.log('transaction complete');
-                    success();
-                };
-
-                var store = tx.objectStore('objects');
-
-                for (var id = 1; id <= count; id++) {
-                    var record = {
-                        id: id,
-                        firstName: Faker.Name.firstName(),
-                        lastName: Faker.Name.lastName()
-                    };
-
-                    store.put(record);
+            function tearDown(data) {
+                console.log('tearing down');
+                if (data.db) {
+                    console.log('closing db');
+                    data.db.close();
+                    console.log('db closed');
+                } else {
+                    console.log('no db to close');
                 }
             }
+
+            function addRecordToTable(table, record) {
+                var newRow = table.insertRow(-1);
+                var idCell = newRow.insertCell(-1);
+                idCell.innerHTML = record.id;
+                var firstNameCell = newRow.insertCell(-1);
+                firstNameCell.innerHTML = record.firstName;
+                var lastNameCell = newRow.insertCell(-1);
+                lastNameCell.innerHTML = record.lastName;
+            }
         </script>
 
-        <section>
+        <section data-example="openDB">
+            <h1>indexedDB.open(name)</h1>
+            <p>Opens the database named <input name="name" value="stuff">.</p>
+            <script data-args="name" data-result="db" data-async="true">
+                function openDB(name, success, error) {
+                    console.log('about to open db asynchronously');
+                    var request = indexedDB.open(name);
+                    console.log('db opened, wait for success');
+
+                    request.onsuccess = function() {
+                        console.log('open success');
+                        var db = request.result;
+                        console.log('db.version is ' + db.version);
+
+                        if (db.version === '1') {
+                            console.log('no need to create object store');
+                            success(db);
+                        } else {
+                            console.log('setting version to 1 asynchronously');
+                            var setVersionRequest = db.setVersion('1');
+                            console.log('version set to 1, wait for success');
+
+                            setVersionRequest.onsuccess = function() {
+                                console.log('setVersion success');
+
+                                console.log('about to create object store');
+                                var store = db.createObjectStore('objects', {
+                                    keyPath: 'id'
+                                });
+                                console.log('object store created');
+
+                                console.log('about to create index');
+                                var index = store.createIndex('firstNameIndex', 'firstName', { unique: false });
+                                console.log('index created');
+
+                                success(db);
+                            };
+
+                            setVersionRequest.onerror = function() {
+                                console.log('setVersion error');
+                                error();
+                            };
+                        }
+                    };
+
+                    request.onerror = function() {
+                        console.log('open error');
+                        error();
+                    };
+                }
+            </script>
+        </section>
+
+        <section data-example="putRecords">
+            <h1>store.put(record)</h1>
+            <p>Puts <input name="count" type="number" value="100"> records into the object store.</p>
+            <script data-args="db count" data-async="true">
+                function putRecords(db, count, success, error) {
+                    var tx = db.transaction(['objects'], IDBTransaction.READ_WRITE);
+
+                    tx.oncomplete = function() {
+                        console.log('transaction complete');
+                        success();
+                    };
+
+                    var store = tx.objectStore('objects');
+
+                    for (var id = 1; id <= count; id++) {
+                        var record = {
+                            id: id,
+                            firstName: Faker.Name.firstName(),
+                            lastName: Faker.Name.lastName()
+                        };
+
+                        store.put(record);
+                    }
+                }
+            </script>
+        </section>
+
+        <section data-example="getRecord">
             <h1>store.get(key)</h1>
             <p>Gets the record with the ID of <input name="id" type="number" value="42">.</p>
+            <script data-args="db id" data-callbacks="record" data-async="true">
+                function getRecord(db, id, processRecord, success, error) {
+                    var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
+
+                    var store = tx.objectStore('objects');
+
+                    // FF doesn't work if it's not a number.
+                    id = +id;
+
+                    var request = store.get(id);
+
+                    request.onsuccess = function() {
+                        processRecord(request.result);
+                        success();
+                    };
+
+                    request.onerror = function() {
+                        error();
+                    };
+                }
+            </script>
         </section>
 
-        <script data-name="getRecord" data-args="db id" data-emits-records="true">
-            function getRecord(db, id, processRecord, success, error) {
-                var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
-
-                var store = tx.objectStore('objects');
-
-                var request = store.get(id);
-
-                request.onsuccess = function() {
-                    processRecord(request.result);
-                    success();
-                };
-
-                request.onerror = function() {
-                    error();
-                };
-            }
-        </script>
-
-        <section>
+        <section data-example="getRecords">
             <h1>store.openCursor()</h1>
             <p>Gets all the records from the object store.</p>
+            <script data-args="db" data-callbacks="record" data-async="true">
+                function getRecords(db, processRecord, success, error) {
+                    var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
+
+                    var store = tx.objectStore('objects');
+
+                    var cursor = store.openCursor();
+
+                    cursor.onsuccess = function(e) {
+                        var cursor = e.target.result;
+                        if (cursor) {
+                            processRecord(cursor.value);
+                            cursor.continue();
+                        } else {
+                            success();
+                        }
+                    };
+                }
+            </script>
         </section>
 
-        <script data-name="getRecords" data-args="db" data-emits-records="true">
-            function getRecords(db, processRecord, success, error) {
-                var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
-
-                var store = tx.objectStore('objects');
-
-                var cursor = store.openCursor();
-
-                cursor.onsuccess = function(e) {
-                    var cursor = e.target.result;
-                    if (cursor) {
-                        processRecord(cursor.value);
-                        cursor.continue();
-                    } else {
-                        success();
-                    }
-                };
-            }
-        </script>
-
-        <section>
+        <section data-example="getRecordsInRange">
             <h1>store.openCursor(range)</h1>
             <p>Gets the records from the object store with ids between
             <input name="lower" type="number" value="10"> and
             <input name="upper" type="number" value="20">.</p>
+            <script data-args="db lower upper" data-callbacks="record" data-async="true">
+                function getRecordsInRange(db, lower, upper, processRecord, success, error) {
+                    var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
+
+                    var store = tx.objectStore('objects');
+
+                    var range;
+
+                    // FF doesn't work if they're not numbers.
+                    lower = +lower;
+                    upper = +upper;
+
+                    if (lower && upper) {
+                        range = IDBKeyRange.bound(lower, upper);
+                    } else if (lower) {
+                        range = IDBKeyRange.lowerBound(lower);
+                    } else if (upper) {
+                        range = IDBKeyRange.upperBound(upper);
+                    }
+
+                    var cursor = store.openCursor(range);
+
+                    cursor.onsuccess = function(e) {
+                        var cursor = e.target.result;
+                        if (cursor) {
+                            processRecord(cursor.value);
+                            cursor.continue();
+                        } else {
+                            success();
+                        }
+                    };
+                }
+            </script>
         </section>
 
-        <script data-name="getRecordsInRange" data-args="db lower upper" data-emits-records="true">
-            function getRecordsInRange(db, lower, upper, processRecord, success, error) {
-                var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
-
-                var store = tx.objectStore('objects');
-
-                var range;
-
-                if (lower && upper) {
-                    range = IDBKeyRange.bound(lower, upper);
-                } else if (lower) {
-                    range = IDBKeyRange.lowerBound(lower);
-                } else if (upper) {
-                    range = IDBKeyRange.upperBound(upper);
-                }
-
-                var cursor = store.openCursor(range);
-
-                cursor.onsuccess = function(e) {
-                    var cursor = e.target.result;
-                    if (cursor) {
-                        processRecord(cursor.value);
-                        cursor.continue();
-                    } else {
-                        success();
-                    }
-                };
-            }
-        </script>
-
-        <section>
+        <section data-example="getRecordsByFirstName">
             <h1>index.openCursor()</h1>
             <p>Gets the records using the "firstName" index.</p>
+            <script data-args="db" data-callbacks="record" data-async="true">
+                function getRecordsByFirstName(db, processRecord, success, error) {
+                    var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
+
+                    var store = tx.objectStore('objects');
+
+                    var index = store.index('firstNameIndex');
+
+                    var cursor = index.openCursor();
+
+                    cursor.onsuccess = function(e) {
+                        var cursor = e.target.result;
+                        if (cursor) {
+                            processRecord(cursor.value);
+                            cursor.continue();
+                        } else {
+                            success();
+                        }
+                    };
+                }
+            </script>
         </section>
 
-        <script data-name="getRecordsByFirstName" data-args="db" data-emits-records="true">
-            function getRecordsByFirstName(db, processRecord, success, error) {
-                var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
-
-                var store = tx.objectStore('objects');
-
-                var index = store.index('firstNameIndex');
-
-                var cursor = index.openCursor();
-
-                cursor.onsuccess = function(e) {
-                    var cursor = e.target.result;
-                    if (cursor) {
-                        processRecord(cursor.value);
-                        cursor.continue();
-                    } else {
-                        success();
-                    }
-                };
-            }
-        </script>
-
-        <section>
+        <section data-example="getRecordsByFirstNameInRange">
             <h1>index.openCursor(range)</h1>
             <p>Gets the records with first names between
             <input name="lower" value="D"> and
             <input name="upper" value="J">.</p>
+            <script data-args="db lower upper" data-callbacks="record" data-async="true">
+                function getRecordsByFirstNameInRange(db, lower, upper, processRecord, success, error) {
+                    var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
+
+                    var store = tx.objectStore('objects');
+
+                    var index = store.index('firstNameIndex');
+
+                    var range;
+
+                    if (lower && upper) {
+                        range = IDBKeyRange.bound(lower, upper);
+                    } else if (lower) {
+                        range = IDBKeyRange.lowerBound(lower);
+                    } else if (upper) {
+                        range = IDBKeyRange.upperBound(upper);
+                    }
+
+                    var cursor = index.openCursor(range);
+
+                    cursor.onsuccess = function(e) {
+                        var cursor = e.target.result;
+                        if (cursor) {
+                            cursor.continue();
+                            processRecord(cursor.value);
+                        } else {
+                            success();
+                        }
+                    };
+                }
+            </script>
         </section>
 
-        <script data-name="getRecordsByFirstNameInRange" data-args="db lower upper" data-emits-records="true">
-            function getRecordsByFirstNameInRange(db, lower, upper, processRecord, success, error) {
-                var tx = db.transaction(['objects'], IDBTransaction.READ_ONLY);
-
-                var store = tx.objectStore('objects');
-
-                var index = store.index('firstNameIndex');
-
-                var range;
-
-                if (lower && upper) {
-                    range = IDBKeyRange.bound(lower, upper);
-                } else if (lower) {
-                    range = IDBKeyRange.lowerBound(lower);
-                } else if (upper) {
-                    range = IDBKeyRange.upperBound(upper);
-                }
-
-                var cursor = index.openCursor(range);
-
-                cursor.onsuccess = function(e) {
-                    var cursor = e.target.result;
-                    if (cursor) {
-                        cursor.continue();
-                        processRecord(cursor.value);
-                    } else {
-                        success();
-                    }
-                };
-            }
-        </script>
-
-        <!-- Examples stop here. -->
-
-        <script>
-            $(function() {
-                var results = {};
-
-                $('section').each(function() {
-                    var $section = $(this),
-                        $script = $section.next('script'),
-                        functionName = $script.data('name'),
-                        argNames = $script.data('args').split(' '),
-                        resultName = $script.data('result'),
-                        emitsRecords = $script.data('emitsRecords'),
-                        $table = null,
-                        $buttons = $('<p>').appendTo($section);
-
-                    $('<button>Go</button>')
-                        .appendTo($buttons)
-                        .click(function(e) {
-                            var args = $.map(argNames, getArg);
-                            if (emitsRecords) {
-                                args.push(addRecordToTable);
-                            }
-                            args.push(function(result) {
-                                if (resultName) {
-                                    results[resultName] = result;
-                                }
-                                console.log(functionName + ' succeeded');
-                            });
-                            args.push(function() {
-                                alert(functionName + ' failed =(');
-                            });
-                            window[functionName].apply(window, args);
-                        });
-
-                    if (emitsRecords) {
-                        $('<button>Clear</button>')
-                            .appendTo($buttons)
-                            .click(function(e) {
-                                clearTable();
-                            });
-                    }
-
-                    $('<button>View Source</button>')
-                        .appendTo($buttons)
-                        .click(function(e) {
-                            var $button = $(this);
-                            if (!$button.data('source')) {
-                                $button.data('source', $('<pre>').text($script.text())
-                                                                 .appendTo($section));
-                                $button.text('Hide Source');
-                            } else {
-                                $button.data('source').remove();
-                                $button.removeData('source');
-                                $button.text('View Source');
-                            }
-                        });
-
-                    if (emitsRecords) {
-                        $table = $('<table>').appendTo($section);
-                    }
-
-                    function getArg(name) {
-                        var arg = results[name];
-                        var $elem = $('[name="' + name + '"]', $section);
-                        if (!$elem.length) {
-                            if (!arg) throw 'missing ' + name;
-                            return arg;
-                        }
-                        if ($elem.is('input:checkbox')) return $elem.prop('checked');
-                        if ($elem.prop('type') === 'number') return parseInt($elem.val(), 10);
-                        return $elem.val();
-                    }
-
-                    function addRecordToTable(record) {
-                        var newRow = $table[0].insertRow(-1);
-                        var idCell = newRow.insertCell(-1);
-                        idCell.innerHTML = record.id;
-                        var firstNameCell = newRow.insertCell(-1);
-                        firstNameCell.innerHTML = record.firstName;
-                        var lastNameCell = newRow.insertCell(-1);
-                        lastNameCell.innerHTML = record.lastName;
-                    }
-
-                    function clearTable() {
-                        $table.empty();
-                    }
-                });
-
-                window.onunload = function() {
-                    console.log('window unloading');
-                    if (results.db) {
-                        console.log('closing db');
-                        results.db.close();
-                        console.log('db closed');
-                    } else {
-                        console.log('no db to close');
-                    }
-                };
-
-            });
-        </script>
     </body>
 </html>
